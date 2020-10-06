@@ -1,0 +1,67 @@
+!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #map {
+        height: 600px;
+        width: 70%;
+        text-align: center;
+        margin: 100px auto;
+      }
+      .button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <center><h1>My Google Maps</h1></center>
+    <center><script defer src="script.js"></script></center>
+
+    <div id="map"></div>
+    <center>
+      <script>
+        function initMap() {
+          var myLatlng = { lat: -25.363, lng: 131.044 };
+          map = new google.maps.Map(document.getElementById("map"), {
+            center: { myLatlng },
+            zoom: 10
+          });
+        }
+      </script>
+    </center>
+    <center>
+      <script
+        async
+        defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAll251l4c6oqn2dAmObTUv-pTx87DPKrw&callback=initMap"
+      >
+        console.log('working');
+      </script>
+    </center>
+
+    <center>
+      <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyJG40Dj1ZW5GXIuMAvnxw1g5souRQxG8&callback=initMap&libraries=&v=weekly"
+        defer
+      ></script>
+    </center>
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+    <script src="./app.js"></script>
+
+    <center>
+      <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    </center>
+
+    <center><a href="#" class="button">Find Places Near You</a></center>
+  
+  </body>
+</html>
