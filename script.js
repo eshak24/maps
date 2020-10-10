@@ -1,8 +1,6 @@
-/* global google*/
+* global windowWidth, windowHeight, google, keyCode, RGB, UP_ARROW, LEFT_ARROW, RIGHT_ARROW, DOWN_ARROW, collideRectCircle, collideCircleCircle, random, mouseIsPressed, clear, textSize, createCanvas, strokeWeight, rect, background, colorMode, HSB, noStroke, backgroundColor, color, fill, ellipse, text, stroke, line, width, height, mouseX, mouseY */
 
-/* global keyCode, UP_ARROW, LEFT_ARROW, createGraphics, windowWidth, windowHeight, RIGHT_ARROW, DOWN_ARROW, collideRectCircle, collideCircleCircle, random, mouseIsPressed, clear, textSize, createCanvas, strokeWeight, rect, background, colorMode, HSB, noStroke, backgroundColor, color, fill, ellipse, text, stroke, line, width, height, mouseX, mouseY */
-
-let map, infoWindow, addy, latlng, formattedAddress, i, dots, permanentLayer, tempLayer;
+let map, infoWindow, addy, latlng, formattedAddress, i, dots;
 
 function httpGetAsync(theUrl, callback) {
   var xmlHttp = new XMLHttpRequest();
@@ -14,29 +12,19 @@ function httpGetAsync(theUrl, callback) {
   // xmlHttp.setRequestHeader('Access-Control-Allow-Origin', '*');
   xmlHttp.send(null);
 }
-
 function setup() {
-  createCanvas(windowWidth - 20, windowHeight - 20);
-  colorMode( 255, 255, 255);
-  
-  setupPermanentLayer();
-  setupTempLayer();
-  
+  createCanvas(windowWidth - 15, windowHeight + 220);
+  colorMode(RGB, 255, 255, 255);
+  // colorMode(HSB, 320, 80, 60 );
+
   dots = [];
   for (let i = 0; i < 1000; i++) {
     dots.push(new BouncyDot());
   }
 }
 
-function setupPermanentLayer(){
-  permanentLayer = createGraphics(700, 1000);
-  //permanentLayer.background(117, 0, 100);
-}
-function setupTempLayer(){
-  tempLayer = createGraphics(400, 300);
-}
 function draw() {
-  
+  background(255, 255, 255);
   // dots[0].float();
   // dots[0].display();
   // dots[1].float();
@@ -49,12 +37,71 @@ function draw() {
   for (let i = 0; i < dots.length; i++) {
     dots[i].float();
     dots[i].display();
+    
+  }
+}
+
+//function mousePressed() {
+// We'll use this for console log statements only.
+//console.log(dots[5].x);
+//}
+
+class BouncyDot {
+  constructor() {
+    this.blue = [0, 0, 255];
+    (this.red = 219), 68, 55;
+    (this.yellow = 255), 255, 0;
+    // this.green = 15, 157, 88;
+
+    //this.arr1 = [this.blue, this.yellow, this.red];
+    this.arr1 = ["#4285F4", "#DB4437", "#F4B400", " #0F9D58"];
+
+    //this.arr1 = [(234, 70), (159,70), (78,70) (30, 70)]
+    // Randomly generate position
+    this.x = random(width);
+    this.y = random(height);
+    // Randomly generate radius
+    this.r = random(8, 15);
+    // Randomly generate color
+    this.color = random(this.arr1);
+    //this.color.setAlpha(255);
+
+    // Randomly generate a master velocity (broken into components)...
+    this.masterXvelocity = random(0.5, 3);
+    this.masterYvelocity = random(0.5, 3);
+    // ...and use those as starting velocities.
+    this.xVelocity = this.masterXvelocity;
+    this.yVelocity = this.masterYvelocity;
+  }
+
+  float() {
+    this.x += this.xVelocity;
+    this.y += this.yVelocity;
+    // Standard bounce code - like the DVD logo, but for spheres.
+    if (this.x + this.r > width) {
+      this.xVelocity = -1 * this.masterXvelocity;
+    }
+    if (this.x - this.r < 0) {
+      this.xVelocity = this.masterXvelocity;
+    }
+    if (this.y + this.r > height) {
+      this.yVelocity = -1 * this.masterYvelocity;
+    }
+    if (this.y - this.r < 0) {
+      this.yVelocity = this.masterYvelocity;
+    }
+  }
+
+  display() {
+    fill(this.color);
+    noStroke();
+    ellipse(this.x, this.y, this.r * 2);
   }
 }
 
 function initMap() {
   var myLatlng = { lat: 0, lng: 0 };
-  tempLayer.map = new google.maps.Map(document.getElementById("map"), {
+  map = new google.maps.Map(document.getElementById("map"), {
     //center: { lat: 37.7749, lng: -122.4194 },
     center: myLatlng,
     zoom: 12
@@ -106,7 +153,6 @@ function initMap() {
     addy = mapsMouseEvent.latLng;
     latlng = [mapsMouseEvent.latLng.lat(), mapsMouseEvent.latLng.lng()];
     findCoords();
-    findPlaces();
     setTimeout(openInfoWindow, 300);
     // infoWindow.setContent(formattedAddress);
     // infoWindow.open(map);
@@ -119,14 +165,30 @@ function openInfoWindow(window) {
   });
   // <a href="https://www.google.com">link</a>
   let anchor = document.createElement("a");
-  anchor.text = "You found" + " " + formattedAddress;
+  anchor.text = "Explore" + " " + formattedAddress;
   anchor.href =
     "https://www.google.com/search?q=" + formattedAddress.toString(); //https://www.google.com/search?q=airplane
   console.log(anchor.href);
   anchor.target = "_blank";
 
-  infoWindow.setContent(anchor);
+  let anchor1 = document.createElement("a");
+  anchor1.text = "Weather at" + " " + formattedAddress;
+  anchor1.href =
+    "https://www.google.com/search?source=hp&ei=PkYjX_32NIXd9APbo6n4Cw&q=weather+" +
+    formattedAddress.toString(); //https://www.google.com/search?q=airplane
+  //console.log(anchor.href);
+  anchor1.target = "_blank";
+
+  let container = document.createElement("div");
+  container.appendChild(anchor); 
+  container.appendChild(document.createElement("br"));
+  
+  container.appendChild(anchor1);
+
+  infoWindow.setContent(container);
   infoWindow.open(map);
+  //infoWindow.setContent(anchor1);
+  //infoWindow.open(map);
   console.log("ended");
 }
 function findCoords(arr) {
@@ -141,106 +203,3 @@ function getAddress(data) {
   let addyObject = JSON.parse(data);
   formattedAddress = addyObject.results[0].formatted_address;
 }
-
-function findPlaces(arr) {
-  const KEY = "AIzaSyDRByLyOjXnAcgKNb9lJmWa9F13ayf9iuY";
-  const LAT = latlng[0];
-  const LNG = latlng[1];
-  let url = `https://maps.googleapis.com/maps/api/place/textsearch/xml?query=restaurants+in+Sydney&key=${KEY}`;
- httpGetAsync(url, getPlaces);
-}
-
-function getPlaces(data) {
-  let placesObject = JSON.parse(data);
-  console.log(placesObject)
-  location = [
-    placesObject.candidates[0].geometry.location.lat(),
-    placesObject.candidates[0].geometry.location.lng()
-  ];
-}
-
-function makeMarkers(location) {
-  if (status == google.maps.places.PlacesServiceStatus.OK) {
-
-  for (let i = 0; i < location.length; i++) {
-    var marker = new google.mapsMarker({
-      position: location[i], 
-      map: map,
-      icon:
-        "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
-    });
-  }
-  }
-}
-
-
-function mousePressed() {
-  // We'll use this for console log statements only.
-  console.log(dots[5].x);
-}
-
-class BouncyDot {
-  constructor() {
-    /*this.blue = '(66,133,244)';
-    this.red = (219, 68, 55);
-    this.yellow = (244, 160, 0); 
-    this.green = (15, 157, 88); 
-    
-    /*var myArray = [
-  "Apples",
-  "Bananas",
-  "Pears"
-];
-
-var randomItem = myArray[Math.floor(Math.random()*myArray.length)];
-
-document.body.innerHTML = randomItem;
-    
-    this.arr1 = [this.blue, this.red, this.yellow, this.green];*/
-    
-   this.arr1 = [(66,133,244), (219, 68, 55), (244, 160, 0), (15, 157, 88)];
-  
-    // Randomly generate position
-    this.x = random(width);
-    this.y = random(height);
-    // Randomly generate radius
-    this.r = random(5, 12);
-    // Randomly generate color
-    //this.color = random(this.arr1);
-   // console.log(this.arr1(this.color));
-    //this.color = this.arr1[Math.floor(Math.random()*this.arr1.length())];
-   // console.log(this.color.toString);
-    // Randomly generate a master velocity (broken into components)...
-    this.masterXvelocity = random(0.5, 3);
-    this.masterYvelocity = random(0.5, 3);
-    // ...and use those as starting velocities.
-    this.xVelocity = this.masterXvelocity;
-    this.yVelocity = this.masterYvelocity;
-  }
-
-  float() {
-    this.x += this.xVelocity;
-    this.y += this.yVelocity;
-    // Standard bounce code - like the DVD logo, but for spheres.
-    if (this.x + this.r > width) {
-      this.xVelocity = -1 * this.masterXvelocity;
-    }
-    if (this.x - this.r < 0) {
-      this.xVelocity = this.masterXvelocity;
-    }
-    if (this.y + this.r > height) {
-      this.yVelocity = -1 * this.masterYvelocity;
-    }
-    if (this.y - this.r < 0) {
-      this.yVelocity = this.masterYvelocity;
-    }
-  }
-
-  display() {
-    fill(random(this.arr1));
-    noStroke();
-    ellipse(this.x, this.y, this.r * 2);
-  }
-}
-
-
