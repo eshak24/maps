@@ -1,15 +1,27 @@
+/* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
 #map {
   height: 100%;
+  width: 70%;
+  opacity: 0.97;
+  border-radius: 20px;
+  background: url(paper.gif);
+  background-position: left top;
+  background-repeat: repeat;
+  padding: 20px;
 }
 
 /* Optional: Makes the sample page fill the window. */
 html,
+
+
 body {
   height: 100%;
-  margin: 0;
-  padding: 0;
 }
 
+#dots {
+  opacity: 0.5;
+}
 
 /*button*/
 <a href="#" class="myButton">green</a>
@@ -38,3 +50,11 @@ body {
 	position:relative;
 	top:1px;
 }
+
+#defaultCanvas0{
+  position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -100;
+}
+
